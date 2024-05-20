@@ -111,7 +111,7 @@ dist
 .vscode-test
 
 # yarn v2
-.yarn/cache
+.yarn/cacheƒ
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
