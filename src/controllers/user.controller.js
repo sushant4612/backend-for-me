@@ -6,18 +6,18 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler( async (req,res) => {
     // get user detail from ffrontend
-    const {fullname, emaail, username, password} = req.body;
+    const {fullname, email, username, password} = req.body;
     //validation - not empty
     if(
-        [fullname, emaail, username, password].some((field) => 
+        [fullname, email, username, password].some((field) => 
         field?.trim() === "")
     ) {
         throw new ApiError(400, "All field are required");
     }
     //check is user already exists : username, email
     
-    const existedUser = User.findOne({
-        $or: [{ username }, {emaail}]
+    const existedUser = await User.findOne({
+        $or: [{ username }, {email}]
     })
 
     if(existedUser){
@@ -25,7 +25,13 @@ const registerUser = asyncHandler( async (req,res) => {
     }
     //check for images, check for avatar
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path
+
+    let coverImageLocalPath;
+
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocalPath = req.files.coverImage[0].pathz̧
+    }
 
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar file required")
@@ -42,7 +48,7 @@ const registerUser = asyncHandler( async (req,res) => {
         fullname,
         avatar : avatar.url,
         coverImage : coverImage?.url || "",
-        emaail,
+        email,
         password,
         username: username.toLowerCase()
 
